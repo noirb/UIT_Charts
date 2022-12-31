@@ -1,0 +1,82 @@
+
+.nb-chart {
+    overflow: hidden;
+    background-color: rgb(32, 33, 36);
+    border-color: #073642;
+    border-width: 1px;
+    height: 100%;
+    padding: 16px;
+}
+
+.nb-chart__axis-label {
+    color: #93a1a1;
+    align-self: center;
+    display: none;
+}
+
+.nb-chart__axis-label__left {
+    rotate: -90deg;
+    width: 32px;
+}
+
+.nb-chart__axis-label__right {
+    rotate: 90deg;
+    width: 32px;
+}
+
+.nb-chart__legend {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    background-color: #102b36;
+    border-left-width: 1px;
+    border-bottom-width: 1px;
+    border-color: #93a1a1;
+    opacity: 0.75;
+    transition: 0.25s opacity;
+}
+
+.nb-chart__legend-active {
+    opacity: 1.0;
+}
+
+.nb-chart__legend__entry {
+    padding-left: 8px;
+    padding-right: 8px;
+    flex-direction: row;
+    flex-grow: 1;
+    width: 100%;
+    border-bottom-width: 1px;
+    border-bottom-color: #586e75;
+}
+
+.nb-chart__legend__entry-disabled {
+    background-color: #232323;
+}
+
+.nb-chart__legend__entry:hover {
+    background-color: #203b46;
+}
+
+.nb-chart__legend__label {
+    color: #eee8d5;
+    border-width: 1px;
+    font-size: 10px;
+}
+
+.nb-chart__legend__entry-disabled > .nb-chart__legend__label {
+    color: #93a1a1;
+}
+
+.nb-chart__legend__color {
+    align-self: center;
+    border-radius: 8px;
+    width: 9px;
+    height: 9px;
+}
+
+.nb-chart-scatterplot {
+}
+
+.nb-chart-lineplot {
+}
