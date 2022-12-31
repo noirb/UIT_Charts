@@ -1,5 +1,9 @@
 # UIToolkit charts & plotting
 
+## Current Supported Chart Types
+* Scatterplot
+* Line chart
+
 ## Installation Instructions
 1. In Unity, open the Package Manager (`Window -> Package Manager`)
 2. In the Add Package menu, choose `Add package from git url...`
