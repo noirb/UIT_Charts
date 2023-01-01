@@ -32,7 +32,12 @@ namespace NB.Charts
             UxmlColorAttributeDescription m_majorGridColor = new UxmlColorAttributeDescription { name = "major-grid-color", defaultValue = new Color32(88, 110, 117, 255) };
             UxmlFloatAttributeDescription m_majorGridLineWidth = new UxmlFloatAttributeDescription { name = "major-grid-line-width", defaultValue = 2f };
             UxmlBoolAttributeDescription m_showMajorGrid = new UxmlBoolAttributeDescription { name = "show-major-grid", defaultValue = true };
-            UxmlBoolAttributeDescription m_majorGridAutoSpacing = new UxmlBoolAttributeDescription { name = "major-grid-auto-spacing", defaultValue = true };
+            UxmlBoolAttributeDescription m_showMajorGridLabelsHorizontal = new UxmlBoolAttributeDescription { name = "show-major-grid-labels-horizontal", defaultValue = true };
+            UxmlBoolAttributeDescription m_showMajorGridLabelsVertical = new UxmlBoolAttributeDescription { name = "show-major-grid-labels-vertical", defaultValue = true };
+            UxmlFloatAttributeDescription m_majorGridLabelFontSize = new UxmlFloatAttributeDescription { name = "major-grid-label-font-size", defaultValue = 10 };
+            UxmlBoolAttributeDescription m_majorGridAutoSpacingHorizontal = new UxmlBoolAttributeDescription { name = "major-grid-auto-spacing-horizontal", defaultValue = true };
+            UxmlBoolAttributeDescription m_majorGridAutoSpacingVertical = new UxmlBoolAttributeDescription { name = "major-grid-auto-spacing-vertical", defaultValue = true };
+            UxmlStringAttributeDescription m_gridLabelFormatString = new UxmlStringAttributeDescription { name = "grid-label-format-string", defaultValue = "N3" };
             public override void Init(VisualElement ve, IUxmlAttributes bag, CreationContext cc)
             {
                 base.Init(ve, bag, cc);
@@ -50,7 +55,12 @@ namespace NB.Charts
                 cb.MajorGridColor = m_majorGridColor.GetValueFromBag(bag, cc);
                 cb.MajorGridLineWidth = m_majorGridLineWidth.GetValueFromBag(bag, cc);
                 cb.ShowMajorGrid = m_showMajorGrid.GetValueFromBag(bag, cc);
-                cb.MajorGridAutoSpacing = m_majorGridAutoSpacing.GetValueFromBag(bag, cc);
+                cb.ShowMajorGridLabelsHorizontal = m_showMajorGridLabelsHorizontal.GetValueFromBag(bag, cc);
+                cb.ShowMajorGridLabelsVertical = m_showMajorGridLabelsVertical.GetValueFromBag(bag, cc);
+                cb.MajorGridAutoSpacingHorizontal = m_majorGridAutoSpacingHorizontal.GetValueFromBag(bag, cc);
+                cb.MajorGridAutoSpacingVertical = m_majorGridAutoSpacingVertical.GetValueFromBag(bag, cc);
+                cb.MajorGridLabelFontSize = m_majorGridLabelFontSize.GetValueFromBag(bag, cc);
+                cb.GridLabelFormatString = m_gridLabelFormatString.GetValueFromBag(bag, cc);
             }
         }
         #endregion
@@ -187,6 +197,48 @@ namespace NB.Charts
             }
         }
 
+        protected bool showMajorGridLabelsHorizontal = true;
+        public bool ShowMajorGridLabelsHorizontal
+        {
+            get => showMajorGridLabelsHorizontal;
+            set
+            {
+                if (showMajorGridLabelsHorizontal != value)
+                {
+                    showMajorGridLabelsHorizontal = value;
+                    content.MarkDirtyRepaint();
+                }
+            }
+        }
+
+        protected bool showMajorGridLabelsVertical = true;
+        public bool ShowMajorGridLabelsVertical
+        {
+            get => showMajorGridLabelsVertical;
+            set
+            {
+                if (showMajorGridLabelsVertical != value)
+                {
+                    showMajorGridLabelsVertical = value;
+                    content.MarkDirtyRepaint();
+                }
+            }
+        }
+
+        protected float majorGridLabelFontSize = 10f;
+        public float MajorGridLabelFontSize
+        {
+            get => majorGridLabelFontSize;
+            set
+            {
+                if (majorGridLabelFontSize != value)
+                {
+                    majorGridLabelFontSize = value;
+                    content.MarkDirtyRepaint();
+                }
+            }
+        }
+
         protected bool showLegend = true;
         public bool ShowLegend
         {
@@ -198,15 +250,43 @@ namespace NB.Charts
             }
         }
 
-        protected bool majorGridAutoSpacing = true;
-        public bool MajorGridAutoSpacing
+        protected bool majorGridAutoSpacingHorizontal = true;
+        public bool MajorGridAutoSpacingHorizontal
         {
-            get => majorGridAutoSpacing;
+            get => majorGridAutoSpacingHorizontal;
             set
             {
-                if (majorGridAutoSpacing != value)
+                if (majorGridAutoSpacingHorizontal != value)
                 {
-                    majorGridAutoSpacing = value;
+                    majorGridAutoSpacingHorizontal = value;
+                    content.MarkDirtyRepaint();
+                }
+            }
+        }
+
+        protected bool majorGridAutoSpacingVertical = true;
+        public bool MajorGridAutoSpacingVertical
+        {
+            get => majorGridAutoSpacingVertical;
+            set
+            {
+                if (majorGridAutoSpacingVertical != value)
+                {
+                    majorGridAutoSpacingVertical = value;
+                    content.MarkDirtyRepaint();
+                }
+            }
+        }
+
+        protected string gridLabelFormatString = "N3";
+        public string GridLabelFormatString
+        {
+            get => gridLabelFormatString;
+            set
+            {
+                if (gridLabelFormatString != value)
+                {
+                    gridLabelFormatString = value;
                     content.MarkDirtyRepaint();
                 }
             }
@@ -252,14 +332,14 @@ namespace NB.Charts
             content.MarkDirtyRepaint();
         }
 
-        Vector2 dataRangeX = Vector2.zero;
+        protected Vector2 dataRangeX = Vector2.zero;
         public void SetDataRangeX(float lower, float upper)
         {
             dataRangeX = new Vector2(lower, upper);
             content.MarkDirtyRepaint();
         }
 
-        Vector2 dataRangeY = Vector2.zero;
+        protected Vector2 dataRangeY = Vector2.zero;
         public void SetDataRangeY(float lower, float upper)
         {
             dataRangeY = new Vector2(lower, upper);
@@ -305,25 +385,35 @@ namespace NB.Charts
             p.strokeColor = majorGridColor;
             p.lineWidth = majorGridLineWidth;
 
-            if (majorGridAutoSpacing)
+            if (majorGridAutoSpacingHorizontal || majorGridAutoSpacingVertical)
             {
                 for (float i = 0; i <= 5; i++)
                 {
-                    float y_val = Mathf.Lerp(dataRangeY.x, dataRangeY.y, i / 5f);
-                    float y_tick = MapRange(y_val, dataRangeY, eleRangeY);
-                    p.BeginPath();
-                    p.MoveTo(new Vector2(0, y_tick));
-                    p.LineTo(new Vector2(content.resolvedStyle.width, y_tick));
-                    p.Stroke();
-                    mgc.DrawText(y_val.ToString("N3"), new Vector2(8, y_tick - 10), 7, Color.white);
+                    if (majorGridAutoSpacingVertical)
+                    {
+                        float y_val = Mathf.Lerp(dataRangeY.x, dataRangeY.y, i / 5f);
+                        float y_tick = MapRange(y_val, dataRangeY, eleRangeY);
+                        p.BeginPath();
+                        p.MoveTo(new Vector2(0, y_tick));
+                        p.LineTo(new Vector2(content.resolvedStyle.width, y_tick));
+                        p.Stroke();
 
-                    float x_val = Mathf.Lerp(dataRangeX.x, dataRangeX.y, i / 5f);
-                    float x_tick = MapRange(x_val, dataRangeX, eleRangeX);
-                    p.BeginPath();
-                    p.MoveTo(new Vector2(x_tick, 0));
-                    p.LineTo(new Vector2(x_tick, content.resolvedStyle.height));
-                    p.Stroke();
-                    mgc.DrawText(x_val.ToString("N3"), new Vector2(x_tick, content.resolvedStyle.height - 10), 7, Color.white);
+                        if (showMajorGridLabelsHorizontal)
+                            mgc.DrawText(y_val.ToString(gridLabelFormatString), new Vector2(8, y_tick - 10), majorGridLabelFontSize, Color.white);
+                    }
+
+                    if (majorGridAutoSpacingHorizontal)
+                    {
+                        float x_val = Mathf.Lerp(dataRangeX.x, dataRangeX.y, i / 5f);
+                        float x_tick = MapRange(x_val, dataRangeX, eleRangeX);
+                        p.BeginPath();
+                        p.MoveTo(new Vector2(x_tick, 0));
+                        p.LineTo(new Vector2(x_tick, content.resolvedStyle.height));
+                        p.Stroke();
+
+                        if (showMajorGridLabelsVertical)
+                            mgc.DrawText(x_val.ToString(gridLabelFormatString), new Vector2(x_tick, content.resolvedStyle.height + 5), majorGridLabelFontSize, Color.white);
+                    }
                 }
             }
 
@@ -334,7 +424,9 @@ namespace NB.Charts
                 p.MoveTo(new Vector2(tick, 0));
                 p.LineTo(new Vector2(tick, content.resolvedStyle.height));
                 p.Stroke();
-                mgc.DrawText(verticalGridMarks[i].ToString("N3"), new Vector2(tick, content.resolvedStyle.height - 10), 7, Color.white);
+
+                if (showMajorGridLabelsVertical)
+                    mgc.DrawText(verticalGridMarks[i].ToString(gridLabelFormatString), new Vector2(tick - 7, content.resolvedStyle.height + 5), majorGridLabelFontSize, Color.white);
             }
             for (int i = 0; i < horizontalGridMarks.Count; i++)
             {
@@ -343,7 +435,9 @@ namespace NB.Charts
                 p.MoveTo(new Vector2(0, tick));
                 p.LineTo(new Vector2(content.resolvedStyle.width, tick));
                 p.Stroke();
-                mgc.DrawText(horizontalGridMarks[i].ToString("N3"), new Vector2(8, tick - 10), 7, Color.white);
+
+                if (showMajorGridLabelsHorizontal)
+                    mgc.DrawText(horizontalGridMarks[i].ToString(gridLabelFormatString), new Vector2(8, tick - 10), majorGridLabelFontSize, Color.white);
             }
         }
 

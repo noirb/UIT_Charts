@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -15,7 +16,7 @@ namespace NB.Charts
         public new class UxmlTraits : ChartBase.UxmlTraits
         {
             UxmlFloatAttributeDescription m_defaultDataWidth = new UxmlFloatAttributeDescription { name = "default-data-width", defaultValue = 5f };
-
+            UxmlBoolAttributeDescription m_showMarkers = new UxmlBoolAttributeDescription { name = "show-markers", defaultValue = false };
             public override void Init(VisualElement ve, IUxmlAttributes bag, CreationContext cc)
             {
                 base.Init(ve, bag, cc);
@@ -23,9 +24,14 @@ namespace NB.Charts
 
                 var sp = ve as LineChart;
                 sp.DefaultDataWidth = m_defaultDataWidth.GetValueFromBag(bag, cc);
+                sp.ShowMarkers = m_showMarkers.GetValueFromBag(bag, cc);
             }
         }
         #endregion
+
+        public LineChart()
+        {
+        }
 
         float defaultDataWidth = 2;
         public float DefaultDataWidth
@@ -36,6 +42,20 @@ namespace NB.Charts
                 if (defaultDataWidth != value)
                 {
                     defaultDataWidth = value;
+                    content.MarkDirtyRepaint();
+                }
+            }
+        }
+
+        bool showMarkers = false;
+        public bool ShowMarkers
+        {
+            get => showMarkers;
+            set
+            {
+                if (showMarkers != value)
+                {
+                    showMarkers = value;
                     content.MarkDirtyRepaint();
                 }
             }
@@ -75,6 +95,25 @@ namespace NB.Charts
                     p.LineTo(new Vector2(MapRange(data.Value[i].x, dataRangeX, eleRangeX), MapRange(data.Value[i].y, dataRangeY, eleRangeY)));
                 }
                 p.Stroke();
+
+                if (showMarkers)
+                {
+                    p.strokeColor = p.strokeColor * 0.8f;
+                    for (int i = 0; i < data.Value.Count; i++)
+                    {
+                        if (data.Value[i].x < dataRangeX.x || data.Value[i].x > dataRangeX.y)
+                            continue;
+
+                        var pt = new Vector2(MapRange(data.Value[i].x, dataRangeX, eleRangeX), MapRange(data.Value[i].y, dataRangeY, eleRangeY));
+                        p.BeginPath();
+                        p.MoveTo(pt + new Vector2(2 * p.lineWidth, 2 * p.lineWidth));
+                        p.LineTo(pt + new Vector2(-2 * p.lineWidth, 2 * p.lineWidth));
+                        p.LineTo(pt + new Vector2(-2 * p.lineWidth, -2 * p.lineWidth));
+                        p.LineTo(pt + new Vector2(2 * p.lineWidth, -2 * p.lineWidth));
+                        p.ClosePath();
+                        p.Stroke();
+                    }
+                }
             }
         }
 

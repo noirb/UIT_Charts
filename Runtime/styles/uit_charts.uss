@@ -11,7 +11,6 @@
 .nb-chart__axis-label {
     color: #93a1a1;
     align-self: center;
-    display: none;
 }
 
 .nb-chart__axis-label__left {
@@ -29,15 +28,32 @@
     top: 0px;
     right: 0px;
     background-color: #102b36;
-    border-left-width: 1px;
-    border-bottom-width: 1px;
-    border-color: #93a1a1;
-    opacity: 0.75;
+    opacity: 0.55;
     transition: 0.25s opacity;
 }
 
 .nb-chart__legend-active {
     opacity: 1.0;
+}
+
+.nb-chart__legend__entries {
+    border-left-width: 1px;
+    border-bottom-width: 1px;
+    border-color: #93a1a1;
+    overflow: hidden;
+    max-height: 100%;
+    transition: 0.45s max-height;
+}
+
+.nb-chart__legend__entries-minimized {
+    max-height: 0%;
+}
+
+.nb-chart__legend__minimize-button {
+    height: 16px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    color: #93a1a1;
 }
 
 .nb-chart__legend__entry {

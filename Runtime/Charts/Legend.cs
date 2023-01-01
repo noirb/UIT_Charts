@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +10,10 @@ namespace NB.Charts
     {
         public static readonly string legendUssClassName = "nb-chart__legend";
         public static readonly string activeUssClassName = "nb-chart__legend-active";
+
+        public static readonly string legendEntriesUssClassName = "nb-chart__legend__entries";
+        public static readonly string legendEntriesMinimizedClassName = "nb-chart__legend__entries-minimized";
+        public static readonly string legendEntriesMinimizeButtonClassName = "nb-chart__legend__minimize-button";
 
         public static readonly string legendEntryUssClassName = "nb-chart__legend__entry";
         public static readonly string legendEntryDisabledUssClassName = "nb-chart__legend__entry-disabled";
@@ -28,9 +32,27 @@ namespace NB.Charts
 
         public Action<string> OnToggleSeries { get; set; }
 
+        VisualElement entryContainer;
         public Legend()
         {
             AddToClassList(legendUssClassName);
+
+            entryContainer = new VisualElement();
+            entryContainer.AddToClassList(legendEntriesUssClassName);
+            Add(entryContainer);
+
+            Button minimizeButton = new Button();
+            minimizeButton.AddToClassList(legendEntriesMinimizeButtonClassName);
+            minimizeButton.text = "▲";
+            minimizeButton.RegisterCallback<ClickEvent>((evt) => {
+                entryContainer.ToggleInClassList(legendEntriesMinimizedClassName);
+                if (minimizeButton.text == "▲")
+                    minimizeButton.text = "▼";
+                else
+                    minimizeButton.text = "▲";
+                entryContainer.SetEnabled(!entryContainer.enabledSelf);
+            });
+            Add(minimizeButton);
 
             RegisterCallback<PointerEnterEvent>((evt) =>
             {
@@ -70,8 +92,7 @@ namespace NB.Charts
                 OnToggleSeries?.Invoke(name);
             });
 
-
-            Add(ele);
+            entryContainer.Add(ele);
 
             entries[name] = ele;
         }

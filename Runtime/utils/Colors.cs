@@ -12,12 +12,10 @@ namespace NB.Charts.Utils
         /// </summary>
         public static Color RandNice()
         {
-            return Random.ColorHSV(0, 1, 0.16f, 0.4f, 0.2f, 0.65f);
+            return Random.ColorHSV(0, 1, 0.26f, 0.65f, 0.45f, 0.75f);
         }
 
-
-
-        static Color32[] C_Pastelles =
+        static readonly Color32[] C_Pastelles =
         {
             new Color32(253, 127, 111, 255),
             new Color32(178, 224, 97, 255),
@@ -30,7 +28,7 @@ namespace NB.Charts.Utils
             new Color32(139, 211, 199, 255)
         };
 
-        static Color32[] C_Tableau10 =
+        static readonly Color32[] C_Tableau10 =
         {
             new Color32(78, 121, 167, 255),
             new Color32(242, 142, 44, 255),
@@ -44,20 +42,21 @@ namespace NB.Charts.Utils
             new Color32(186, 176, 171, 255)
         };
 
-        static Color32[] C_Solarized =
+        // slightly modified solarized palette
+        static readonly Color32[] C_Solarized =
         {
-            new Color32(253, 246, 227, 255),
-            new Color32(203, 75, 22, 255),
             new Color32(220, 50, 47, 255),
+            new Color32(33, 153, 0, 255),
+            new Color32(38, 139, 210, 255),
+            new Color32(253, 246, 227, 255),
+            new Color32(42, 161, 152, 255),
+            new Color32(108, 113, 196, 255),
+            new Color32(203, 75, 22, 255),
             new Color32(211, 54, 130, 255),
             new Color32(181, 137, 0, 255),
-            new Color32(108, 113, 196, 255),
-            new Color32(38, 139, 210, 255),
-            new Color32(42, 161, 152, 255),
-            new Color32(133, 153, 0, 255)
         };
 
-        static Color32[] S_Blue2Yellow =
+        static readonly Color32[] S_Blue2Yellow =
         {
             new Color32(17, 95, 154, 255),
             new Color32(25, 132, 197, 255),
@@ -70,7 +69,7 @@ namespace NB.Charts.Utils
             new Color32(208, 244, 0, 255)
         };
 
-        static Color32[] S_Blue2Red =
+        static readonly Color32[] S_Blue2Red =
         {
             new Color32(215, 225, 238, 255),
             new Color32(203, 214, 228, 255),
@@ -83,7 +82,7 @@ namespace NB.Charts.Utils
             new Color32(153, 31, 23, 255)
         };
 
-        static Color32[] D_Teal2Pink =
+        static readonly Color32[] D_Teal2Pink =
 {
             new Color32(84, 190, 190, 255),
             new Color32(118, 200, 200, 255),
@@ -120,6 +119,8 @@ namespace NB.Charts.Utils
                     return S_Blue2Red[mod(idx, S_Blue2Red.Length)];
                 case Palettes.D_Teal2Pink:
                     return D_Teal2Pink[mod(idx, D_Teal2Pink.Length)];
+                case Palettes.Random:
+                    return RandNice();
                 default:
                     throw new System.ArgumentException("Unknown color palette!");
             }

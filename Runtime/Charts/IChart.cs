@@ -10,7 +10,8 @@ namespace NB.Charts
         C_Tableau10,
         S_Blue2Yellow,
         D_Blue2Red,
-        D_Teal2Pink
+        D_Teal2Pink,
+        Random
     }
 
     public enum GridDirection
@@ -41,6 +42,8 @@ namespace NB.Charts
         Color MajorGridColor { get; set; }
         float MajorGridLineWidth { get; set; }
         bool ShowMajorGrid { get; set; }
+        bool ShowMajorGridLabelsHorizontal { get; set; }
+        bool ShowMajorGridLabelsVertical { get; set; }
         bool ShowLegend { get; set; }
     }
 }
