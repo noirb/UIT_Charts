@@ -3,6 +3,7 @@
 ## Current Supported Chart Types
 * Scatterplot
 * Line chart
+* Pie chart
 
 ## Installation Instructions
 1. In Unity, open the Package Manager (`Window -> Package Manager`)
