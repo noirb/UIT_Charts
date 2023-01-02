@@ -6,14 +6,14 @@ using UnityEngine.UIElements;
 
 namespace NB.Charts
 {
-    public class LineChart : ChartBase
+    public class LineChart : TimeSeriesChartBase
     {
         public static new readonly string elementUssClassName = "nb-chart-lineplot";
 
         #region Element Boilerplate
         public new class UxmlFactory : UxmlFactory<LineChart, UxmlTraits> { }
 
-        public new class UxmlTraits : ChartBase.UxmlTraits
+        public new class UxmlTraits : TimeSeriesChartBase.UxmlTraits
         {
             UxmlFloatAttributeDescription m_defaultDataWidth = new UxmlFloatAttributeDescription { name = "default-data-width", defaultValue = 5f };
             UxmlBoolAttributeDescription m_showMarkers = new UxmlBoolAttributeDescription { name = "show-markers", defaultValue = false };
@@ -31,6 +31,23 @@ namespace NB.Charts
 
         public LineChart()
         {
+            if (!Application.isPlaying)
+            {
+                SetData(new List<Vector2> {
+                    new Vector2(1, 1),
+                    new Vector2(2, 2),
+                    new Vector2(3, 1),
+                    new Vector2(4, 3),
+                    new Vector2(5, 2),
+                }, "A");
+                SetData(new List<Vector2> {
+                    new Vector2(1, 3),
+                    new Vector2(2, 1.1f),
+                    new Vector2(3, 1.5f),
+                    new Vector2(4, 0.5f),
+                    new Vector2(5, -0.5f),
+                }, "B");
+            }
         }
 
         float defaultDataWidth = 2;

@@ -20,30 +20,19 @@ namespace NB.Charts
         Vertical
     }
 
-    public interface IChart
+    public interface IChart<TraceData>
     {
-        void SetData(IList<Vector2> data, string series = "");
+        void SetData(TraceData data, string series = "");
         void SetVisibility(string series, bool visible);
         void ToggleVisibility(string series);
         void RemoveDataSeries(string series);
-
         void SetColor(Color color, string series = "");
-
-        void AddGridLine(GridDirection direction, float pos);
-        void ClearGridLines();
-        void SetDataRangeX(float lower, float upper);
-        void SetDataRangeY(float lower, float upper);
 
         string AxisLabelBottom { get; set; }
         string AxisLabelLeft { get; set; }
         string AxisLabelRight { get; set; }
         string AxisLabelTop { get; set; }
         Palettes ColorPalette { get; set; }
-        Color MajorGridColor { get; set; }
-        float MajorGridLineWidth { get; set; }
-        bool ShowMajorGrid { get; set; }
-        bool ShowMajorGridLabelsHorizontal { get; set; }
-        bool ShowMajorGridLabelsVertical { get; set; }
         bool ShowLegend { get; set; }
     }
 }

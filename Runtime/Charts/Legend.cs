@@ -72,6 +72,7 @@ namespace NB.Charts
             ele.AddToClassList(legendEntryUssClassName);
 
             VisualElement colorBlock = new VisualElement();
+            colorBlock.name = "colorblock";
             colorBlock.AddToClassList(legendColorUssClassName);
             colorBlock.style.backgroundColor = color;
             ele.Add(colorBlock);
@@ -104,6 +105,14 @@ namespace NB.Charts
 
             entries[name].RemoveFromHierarchy();
             entries.Remove(name);
+        }
+
+        public void SetColor(Color color, string name)
+        {
+            if (!entries.ContainsKey(name))
+                return;
+
+            entries[name].Q("colorblock").style.backgroundColor = color;
         }
     }
 }

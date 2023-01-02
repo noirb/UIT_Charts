@@ -6,14 +6,14 @@ using UnityEngine.UIElements;
 
 namespace NB.Charts
 {
-    public class Scatterplot : ChartBase
+    public class Scatterplot : TimeSeriesChartBase
     {
         public static new readonly string elementUssClassName = "nb-chart-scatterplot";
 
         #region Element Boilerplate
         public new class UxmlFactory : UxmlFactory<Scatterplot, UxmlTraits> { }
 
-        public new class UxmlTraits : ChartBase.UxmlTraits
+        public new class UxmlTraits : TimeSeriesChartBase.UxmlTraits
         {
             UxmlFloatAttributeDescription m_defaultDataWidth = new UxmlFloatAttributeDescription { name = "default-data-width", defaultValue = 5f };
 
@@ -37,7 +37,7 @@ namespace NB.Charts
                 if (defaultDataWidth != value)
                 {
                     defaultDataWidth = value;
-                    MarkDirtyRepaint();
+                    content.MarkDirtyRepaint();
                 }
             }
         }
@@ -46,6 +46,27 @@ namespace NB.Charts
         {
             Square,
             Circle
+        }
+
+        public Scatterplot()
+        {
+            if (!Application.isPlaying)
+            {
+                SetData(new List<Vector2> {
+                    new Vector2(1, 1),
+                    new Vector2(2, 2),
+                    new Vector2(3, 1),
+                    new Vector2(4, 3),
+                    new Vector2(5, 2),
+                }, "A");
+                SetData(new List<Vector2> {
+                    new Vector2(1, 3),
+                    new Vector2(2, 1.1f),
+                    new Vector2(3, 1.5f),
+                    new Vector2(4, 0.5f),
+                    new Vector2(5, -0.5f),
+                }, "B");
+            }
         }
 
         void DrawSquare(Painter2D p, Vector2 position, float width)
