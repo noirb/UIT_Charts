@@ -15,6 +15,7 @@ namespace NB.Charts
         public static readonly string axisLabelLeftUssClassName = "nb-chart__axis-label__left";
         public static readonly string axisLabelRightUssClassName = "nb-chart__axis-label__right";
         public static readonly string axisLabelTopUssClassName = "nb-chart__axis-label__top";
+        public static readonly string tooltipUssClassName = "nb-chart__tooltip";
         #endregion
 
         #region Element boilerplate
@@ -52,6 +53,7 @@ namespace NB.Charts
         Label axisLabelBottom;
         Label axisLabelLeft;
         Label axisLabelRight;
+        Label tooltipLabel;
 
         public ChartBase()
         {
@@ -91,9 +93,15 @@ namespace NB.Charts
             legend.OnToggleSeries += (name) =>
             {
                 ToggleVisibility(name);
-                content.MarkDirtyRepaint();
+                MarkDirty();
             };
             Add(legend);
+
+            tooltipLabel = new Label();
+            tooltipLabel.pickingMode = PickingMode.Ignore;
+            tooltipLabel.AddToClassList(tooltipUssClassName);
+            tooltipLabel.style.opacity = 0;
+            Add(tooltipLabel);
 
             content.generateVisualContent += GenerateVisualContent;
         }
@@ -138,7 +146,7 @@ namespace NB.Charts
                         SetColor(Utils.Colors.FromPalette(colorPalette, i), data.Key);
                         i++;
                     }
-                    content.MarkDirtyRepaint();
+                    MarkDirty();
                 }
             }
         }
@@ -167,7 +175,7 @@ namespace NB.Charts
         {
             seriesColors[series] = color;
             legend.SetColor(color, series);
-            content.MarkDirtyRepaint();
+            MarkDirty();
         }
 
         public void SetVisibility(string series, bool visible)
@@ -196,7 +204,7 @@ namespace NB.Charts
             if (!seriesVisibility.ContainsKey(series))
                 seriesVisibility[series] = true;
 
-            content.MarkDirtyRepaint();
+            MarkDirty();
         }
 
         public virtual void RemoveDataSeries(string series)
@@ -206,8 +214,39 @@ namespace NB.Charts
             this.seriesVisibility.Remove(series);
         }
 
+        public void ShowTooltip(Vector2 pos, string text)
+        {
+            tooltipLabel.style.translate = new StyleTranslate(new Translate(new Length(pos.x, LengthUnit.Pixel), new Length(pos.y, LengthUnit.Pixel)));
+            tooltipLabel.text = text;
+            tooltipLabel.style.opacity = 1;
+        }
+
+        public void HideTooltip()
+        {
+            tooltipLabel.style.opacity = 0;
+            tooltipLabel.style.left = 0;
+            tooltipLabel.style.top = 0;
+        }
+
         protected abstract void GenerateVisualContent(MeshGenerationContext mgc);
 
         protected abstract void DrawChart(Painter2D p, MeshGenerationContext mgc, Vector2 dataRangeX, Vector2 dataRangeY, Vector2 eleRangeX, Vector2 eleRangeY);
+
+        protected bool dirty = false;
+        protected virtual void OnRefreshVisuals()
+        {
+            dirty = false;
+        }
+
+        protected virtual void MarkDirty()
+        {
+            content.MarkDirtyRepaint();
+
+            if (!dirty)
+            {
+                dirty = true;
+                schedule.Execute(() => OnRefreshVisuals());
+            }
+        }
     }
 }

@@ -37,7 +37,7 @@ namespace NB.Charts
                 if (defaultDataWidth != value)
                 {
                     defaultDataWidth = value;
-                    content.MarkDirtyRepaint();
+                    MarkDirty();
                 }
             }
         }
@@ -141,13 +141,13 @@ namespace NB.Charts
         public void SetMarkerWidth(float width, string series = "")
         {
             seriesWidths[series] = width;
-            content.MarkDirtyRepaint();
+            MarkDirty();
         }
 
         public void SetMarkerType(MarkerType type, string series = "")
         {
             seriesMarkers[series] = type;
-            content.MarkDirtyRepaint();
+            MarkDirty();
         }
     }
 }

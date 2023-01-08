@@ -48,7 +48,7 @@ namespace NB.Charts
                 if (majorGridColor != value)
                 {
                     majorGridColor = value;
-                    content.MarkDirtyRepaint();
+                    MarkDirty();
                 }
             }
         }
@@ -62,7 +62,7 @@ namespace NB.Charts
                 if (majorGridLineWidth != value)
                 {
                     majorGridLineWidth = value;
-                    content.MarkDirtyRepaint();
+                    MarkDirty();
                 }
             }
         }
@@ -76,7 +76,7 @@ namespace NB.Charts
                 if (showMajorGrid != value)
                 {
                     showMajorGrid = value;
-                    content.MarkDirtyRepaint();
+                    MarkDirty();
                 }
             }
         }
@@ -90,7 +90,7 @@ namespace NB.Charts
                 if (showMajorGridLabelsHorizontal != value)
                 {
                     showMajorGridLabelsHorizontal = value;
-                    content.MarkDirtyRepaint();
+                    MarkDirty();
                 }
             }
         }
@@ -104,7 +104,7 @@ namespace NB.Charts
                 if (showMajorGridLabelsVertical != value)
                 {
                     showMajorGridLabelsVertical = value;
-                    content.MarkDirtyRepaint();
+                    MarkDirty();
                 }
             }
         }
@@ -118,7 +118,7 @@ namespace NB.Charts
                 if (majorGridLabelFontSize != value)
                 {
                     majorGridLabelFontSize = value;
-                    content.MarkDirtyRepaint();
+                    MarkDirty();
                 }
             }
         }
@@ -132,7 +132,7 @@ namespace NB.Charts
                 if (majorGridAutoSpacingHorizontal != value)
                 {
                     majorGridAutoSpacingHorizontal = value;
-                    content.MarkDirtyRepaint();
+                    MarkDirty();
                 }
             }
         }
@@ -146,7 +146,7 @@ namespace NB.Charts
                 if (majorGridAutoSpacingVertical != value)
                 {
                     majorGridAutoSpacingVertical = value;
-                    content.MarkDirtyRepaint();
+                    MarkDirty();
                 }
             }
         }
@@ -160,7 +160,7 @@ namespace NB.Charts
                 if (gridLabelFormatString != value)
                 {
                     gridLabelFormatString = value;
-                    content.MarkDirtyRepaint();
+                    MarkDirty();
                 }
             }
         }
@@ -182,28 +182,28 @@ namespace NB.Charts
                     throw new System.ArgumentException("Invalid direction specified");
             }
 
-            content.MarkDirtyRepaint();
+            MarkDirty();
         }
 
         public void ClearGridLines()
         {
             horizontalGridMarks.Clear();
             verticalGridMarks.Clear();
-            content.MarkDirtyRepaint();
+            MarkDirty();
         }
 
         protected Vector2 dataRangeX = Vector2.zero;
         public void SetDataRangeX(float lower, float upper)
         {
             dataRangeX = new Vector2(lower, upper);
-            content.MarkDirtyRepaint();
+            MarkDirty();
         }
 
         protected Vector2 dataRangeY = Vector2.zero;
         public void SetDataRangeY(float lower, float upper)
         {
             dataRangeY = new Vector2(lower, upper);
-            content.MarkDirtyRepaint();
+            MarkDirty();
         }
 
         void DrawMajorGrid(Painter2D p, MeshGenerationContext mgc, Vector2 dataRangeX, Vector2 dataRangeY, Vector2 eleRangeX, Vector2 eleRangeY)

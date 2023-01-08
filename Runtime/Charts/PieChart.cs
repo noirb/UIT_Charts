@@ -35,7 +35,7 @@ namespace NB.Charts
                 if (borderColor != value)
                 {
                     borderColor = value;
-                    content.MarkDirtyRepaint();
+                    MarkDirty();
                 }
             }
         }
