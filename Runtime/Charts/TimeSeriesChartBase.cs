@@ -195,15 +195,21 @@ namespace NB.Charts
         protected Vector2 dataRangeX = Vector2.zero;
         public void SetDataRangeX(float lower, float upper)
         {
-            dataRangeX = new Vector2(lower, upper);
-            MarkDirty();
+            if (dataRangeX.x != lower || dataRangeX.y != upper)
+            {
+                dataRangeX = new Vector2(lower, upper);
+                MarkDirty();
+            }
         }
 
         protected Vector2 dataRangeY = Vector2.zero;
         public void SetDataRangeY(float lower, float upper)
         {
-            dataRangeY = new Vector2(lower, upper);
-            MarkDirty();
+            if (dataRangeY.x != lower || dataRangeY.y != upper)
+            {
+                dataRangeY = new Vector2(lower, upper);
+                MarkDirty();
+            }
         }
 
         void DrawMajorGrid(Painter2D p, MeshGenerationContext mgc, Vector2 dataRangeX, Vector2 dataRangeY, Vector2 eleRangeX, Vector2 eleRangeY)
