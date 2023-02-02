@@ -1,16 +1,17 @@
 {
     "name": "com.nb.uit_charts",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "displayName": "UIT Charts",
     "description": "Library for producing nice-looking charts and plots in UIToolkit",
     "unity": "2022.1",
     "dependencies": {
-
     },
     "author": {
         "name": "NB",
         "email": "noirb@users.noreply.github.com"
     },
+    "license": "WTFPL",
     "keywords": [
+        "Plotting", "Charts", "Graphs"
     ]
 }
