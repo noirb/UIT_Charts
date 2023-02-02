@@ -104,6 +104,7 @@ namespace NB.Charts
             Add(tooltipLabel);
 
             content.generateVisualContent += GenerateVisualContent;
+            content.RegisterCallback<GeometryChangedEvent>((evt) => MarkDirty());
         }
 
         public string AxisLabelBottom
