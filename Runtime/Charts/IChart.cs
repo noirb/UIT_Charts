@@ -5,6 +5,7 @@ namespace NB.Charts
 {
     public enum Palettes
     {
+        C_Geometry,
         C_Pastels,
         C_Solarized,
         C_Tableau10,

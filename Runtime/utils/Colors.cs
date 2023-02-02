@@ -15,6 +15,26 @@ namespace NB.Charts.Utils
             return Random.ColorHSV(0, 1, 0.26f, 0.65f, 0.45f, 0.75f);
         }
 
+        static readonly Color32[] C_Geometry =
+        {
+            new Color32(220, 50, 47, 255),
+            new Color32(33, 153, 0, 255),
+            new Color32(38, 139, 210, 255),
+            new Color32(205,0, 135, 255),
+            new Color32(219, 50, 47, 255),
+            new Color32(31, 153, 0, 255),
+            new Color32(44, 140, 210, 255),
+            new Color32(175, 211, 90, 255),
+            new Color32(60, 63, 133, 255),
+            new Color32(76, 241, 133, 255),
+            new Color32(33, 77, 78, 255),
+            new Color32(73, 203, 202, 255),
+            new Color32(151, 37, 84, 255),
+            new Color32(216, 133, 159, 255),
+            new Color32(117, 70, 67, 255),
+            new Color32(253, 186, 94, 255)
+        };
+
         static readonly Color32[] C_Pastelles =
         {
             new Color32(253, 127, 111, 255),
@@ -107,6 +127,8 @@ namespace NB.Charts.Utils
         {
             switch (palette)
             {
+                case Palettes.C_Geometry:
+                    return C_Geometry[mod(idx, C_Geometry.Length)];
                 case Palettes.C_Pastels:
                     return C_Pastelles[mod(idx, C_Pastelles.Length)];
                 case Palettes.C_Solarized:
