@@ -260,6 +260,8 @@ namespace NB.Charts
             {
                 if (seriesVisibility[data.Key] != true)
                     continue;
+                if (data.Value.Count < 1)
+                    continue;
 
                 if (seriesColors.ContainsKey(data.Key))
                     p.strokeColor = seriesColors[data.Key];
@@ -269,14 +271,33 @@ namespace NB.Charts
                 else
                     p.lineWidth = defaultDataWidth;
 
+                // start from the first point within the selected dataRange
+                int start_idx = 0;
+                for (int i = 0; i < data.Value.Count; i++)
+                {
+                    if (data.Value[i].x < dataRangeX.x)
+                        start_idx = i;
+                    else
+                        break;
+                }
+
                 p.lineJoin = LineJoin.Miter;
                 p.lineCap = LineCap.Round;
                 p.BeginPath();
-                p.MoveTo(new Vector2(MapRange(data.Value[0].x, dataRangeX, eleRangeX), MapRange(data.Value[0].y, dataRangeY, eleRangeY)));
-
-                for (int i = 0; i < data.Value.Count; i++)
+                p.MoveTo(new Vector2(MapRange(data.Value[start_idx].x, dataRangeX, eleRangeX), MapRange(data.Value[start_idx].y, dataRangeY, eleRangeY)));
+                Vector2 prev = new Vector2(MapRange(data.Value[start_idx].x, dataRangeX, eleRangeX), MapRange(data.Value[start_idx].y, dataRangeY, eleRangeY));
+                for (int i = start_idx; i < data.Value.Count; i++)
                 {
-                    p.LineTo(new Vector2(MapRange(data.Value[i].x, dataRangeX, eleRangeX), MapRange(data.Value[i].y, dataRangeY, eleRangeY)));
+                    var next = new Vector2(MapRange(data.Value[i].x, dataRangeX, eleRangeX), MapRange(data.Value[i].y, dataRangeY, eleRangeY));
+                    if (Vector2.Distance(next, prev) > 2) // only draw points which are at least 2 pixels apart from each other (needed to stay under vertex limit for large datasets)
+                    {
+                        p.LineTo(next);
+                        prev = next;
+                    }
+
+                    // if we run past the selected data range, bail
+                    if (data.Value[i].x > dataRangeX.y)
+                        break;
                 }
                 p.Stroke();
             }
