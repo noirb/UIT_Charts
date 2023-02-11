@@ -57,7 +57,8 @@ namespace NB.Charts
         }
 
         List<VisualElement> activeMarkers = new List<VisualElement>();
-        ObjectPool<VisualElement> markerPool = new ObjectPool<VisualElement>(() =>
+        ObjectPool<VisualElement> markerPool = new ObjectPool<VisualElement>(
+            () =>
             {
                 var marker = new VisualElement();
 

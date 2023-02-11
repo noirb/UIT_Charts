@@ -94,6 +94,21 @@
 .nb-chart-scatterplot {
 }
 
+.nb-chart-scatterplot__marker {
+    position: absolute;
+    left: -6px;
+    top: -6px;
+    border-radius: 8px;
+    height: 12px;
+    width: 12px;
+}
+
+.nb-chart-scatterplot__marker:hover {
+    border-radius: 8px;
+    border-width: 2px;
+    border-color: #FFF;
+}
+
 .nb-chart-lineplot {
 }
 
