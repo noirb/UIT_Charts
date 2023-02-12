@@ -40,9 +40,14 @@ namespace NB.Charts
             }
         }
 
+        Vector2 pointerPos = new Vector2(-100, -100);
+
         public PieChart()
         {
             AddToClassList(elementUssClassName);
+
+            content.RegisterCallback<PointerMoveEvent>(OnPointerMove);
+            content.RegisterCallback<PointerLeaveEvent>((evt) => HideTooltip());
 
             if (!Application.isPlaying)
             {
@@ -52,6 +57,12 @@ namespace NB.Charts
                 SetData(("A", 20), "D");
                 SetData(("A", 10), "E");
             }
+        }
+
+        private void OnPointerMove(PointerMoveEvent evt)
+        {
+            pointerPos = evt.localPosition;
+            MarkDirty(); // it might not be necessary to do this EVERY time...
         }
 
         protected override void DrawChart(Painter2D p, MeshGenerationContext mgc, Vector2 dataRangeX, Vector2 dataRangeY, Vector2 eleRangeX, Vector2 eleRangeY)
@@ -73,22 +84,45 @@ namespace NB.Charts
             foreach (var c in contributions.Keys)
             {
                 float pct = contributions[c] / total;
-                float angle = 360 * pct;
+                float end_ang = start_ang + 360 * pct;
+
+                // check if last pointer position overlaps this wedge
+                var dir = center - pointerPos;
+                var pang = Vector2.SignedAngle(-Vector2.right, dir);
+                if (pang < 0)
+                    pang = 360f + pang;
+                bool hovered = dir.magnitude < radius && start_ang <= pang && pang <= end_ang;
 
                 p.strokeColor = borderColor;
-                p.fillColor = seriesColors[c];
+                p.fillColor = hovered ? seriesColors[c] * 1.1f : seriesColors[c];
                 p.BeginPath();
-                p.MoveTo(center);
-                p.Arc(center, radius, new Angle(start_ang, AngleUnit.Degree), new Angle(start_ang + angle, AngleUnit.Degree));
+                if (Mathf.Approximately(pct, 1f)) // handle weird mesh generation cases
+                    p.MoveTo(center + new Vector2(radius, 0));
+                else
+                    p.MoveTo(center);
+                p.Arc(center, radius, new Angle(start_ang, AngleUnit.Degree), new Angle(end_ang, AngleUnit.Degree));
 
-                if (!Mathf.Approximately(pct, 1f))
+                if (!Mathf.Approximately(pct, 1f)) // complete wedge shape unless we're actually drawing a circle
                     p.LineTo(center);
 
                 p.ClosePath();
                 p.Fill();
                 p.Stroke();
 
-                start_ang = start_ang + angle;
+                start_ang = end_ang;
+
+                if (hovered)
+                {
+                    // Can't mesh with VisualElements from within this fn, so schedule tooltip changes for later.
+                    // This introduces a slight delay, but it's probably fine.
+                    schedule.Execute(() => ShowTooltip(pointerPos - new Vector2(0, 16), series[c].ToString()));
+                }
+            }
+
+            // hide tooltip if pointer has left chart
+            if ((center - pointerPos).magnitude >= radius)
+            {
+                schedule.Execute(() => HideTooltip());
             }
         }
 
