@@ -5,16 +5,29 @@ using UnityEngine.UIElements;
 
 namespace NB.Charts
 {
+    /// <summary>
+    /// Base implementation for all charts
+    /// </summary>
     public abstract class ChartBase<T> : VisualElement, IChart<T>
     {
         #region USS
+        /// <summary>
+        /// USS class automatically applied to ALL charts
+        /// </summary>
         public static readonly string elementUssClassName = "nb-chart";
 
+        /// <summary>
+        /// USS class automaticaly applied to all axis labels in all charts
+        /// </summary>
         public static readonly string axisLabelUssClassName = "nb-chart__axis-label";
         public static readonly string axisLabelBottomUssClassName = "nb-chart__axis-label__bottom";
         public static readonly string axisLabelLeftUssClassName = "nb-chart__axis-label__left";
         public static readonly string axisLabelRightUssClassName = "nb-chart__axis-label__right";
         public static readonly string axisLabelTopUssClassName = "nb-chart__axis-label__top";
+
+        /// <summary>
+        /// USS class automaticaly applied tooltips
+        /// </summary>
         public static readonly string tooltipUssClassName = "nb-chart__tooltip";
         #endregion
 
@@ -167,6 +180,12 @@ namespace NB.Charts
         protected Dictionary<string, bool> seriesVisibility = new Dictionary<string, bool>();
         protected Dictionary<string, Color> seriesColors = new Dictionary<string, Color>();
 
+        /// <summary>
+        /// Maps a value from one numeric range to another.
+        /// </summary>
+        /// <param name="v">Value to map</param>
+        /// <param name="fromRange">The original range v is being mapped from. It is assumed that `fromRange.x <= v <= fromRange.y`</param>
+        /// <param name="toRange">The range to map v onto. `toRange.x <= result <= toRange.y`</param>
         protected float MapRange(float v, Vector2 fromRange, Vector2 toRange)
         {
             return (v - fromRange.x) * (toRange.y - toRange.x) / (fromRange.y - fromRange.x) + toRange.x;
@@ -215,6 +234,11 @@ namespace NB.Charts
             this.seriesVisibility.Remove(series);
         }
 
+        /// <summary>
+        /// Displays a tooltip on the chart.
+        /// </summary>
+        /// <param name="pos">Location, relative to the chart element, to display the tooltip.</param>
+        /// <param name="text">Text to display in the tooltip.</param>
         public void ShowTooltip(Vector2 pos, string text)
         {
             tooltipLabel.style.translate = new StyleTranslate(new Translate(new Length(pos.x, LengthUnit.Pixel), new Length(pos.y, LengthUnit.Pixel)));
@@ -222,6 +246,9 @@ namespace NB.Charts
             tooltipLabel.style.opacity = 1;
         }
 
+        /// <summary>
+        /// Hides any open tooltip on the chart.
+        /// </summary>
         public void HideTooltip()
         {
             tooltipLabel.style.opacity = 0;
@@ -239,6 +266,11 @@ namespace NB.Charts
             dirty = false;
         }
 
+        /// <summary>
+        /// Schedules this chart for a repaint and regeneration all visuals. This may be called more than once
+        /// during a single frame without incurring any additional costs.
+        /// Depending on the chart type and complexity of the visualization, this may occur over multiple frames.
+        /// </summary>
         protected virtual void MarkDirty()
         {
             content.MarkDirtyRepaint();

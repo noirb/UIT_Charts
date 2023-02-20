@@ -5,8 +5,14 @@ using UnityEngine.UIElements;
 
 namespace NB.Charts
 {
+    /// <summary>
+    /// A basic pie chart element.
+    /// </summary>
     public class PieChart : ChartBase<(string, float)>
     {
+        /// <summary>
+        /// USS class automatically applied to all elements of this type
+        /// </summary>
         public static new readonly string elementUssClassName = "nb-chart-piechart";
 
         #region Element Boilerplate
@@ -27,6 +33,9 @@ namespace NB.Charts
 
 
         Color borderColor = Color.gray;
+        /// <summary>
+        /// Color of the border between pie slices
+        /// </summary>
         public Color BorderColor
         {
             get => borderColor;
@@ -41,7 +50,6 @@ namespace NB.Charts
         }
 
         Vector2 pointerPos = new Vector2(-100, -100);
-
         public PieChart()
         {
             AddToClassList(elementUssClassName);

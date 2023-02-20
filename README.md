@@ -1,9 +1,11 @@
 # UIToolkit charts & plotting
 
+## [API Documentation](./.github/doc/)
+
 ## Current Supported Chart Types
-* Scatterplot
-* Line chart
-* Pie chart
+* [Scatterplot](./.github/doc/nbcharts-Scatterplot.md)
+* [Line chart](./.github/doc/nbcharts-LineChart.md)
+* [Pie chart](./.github/doc/nbcharts-PieChart.md)
 
 ## Installation Instructions
 1. In Unity, open the Package Manager (`Window -> Package Manager`)

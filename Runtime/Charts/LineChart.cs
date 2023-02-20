@@ -9,7 +9,13 @@ namespace NB.Charts
 {
     public class LineChart : TimeSeriesChartBase
     {
+        /// <summary>
+        /// USS class automatically applied to charts of this type.
+        /// </summary>
         public static new readonly string elementUssClassName = "nb-chart-lineplot";
+        /// <summary>
+        /// USS class automatically applied to markers within charts of this type
+        /// </summary>
         public static readonly string markerUssClassName = "nb-chart-lineplot__marker";
 
         #region Element Boilerplate

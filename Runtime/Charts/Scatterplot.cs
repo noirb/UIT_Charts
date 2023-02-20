@@ -9,7 +9,13 @@ namespace NB.Charts
 {
     public class Scatterplot : TimeSeriesChartBase
     {
+        /// <summary>
+        /// USS class automatically applied to charts of this type.
+        /// </summary>
         public static new readonly string elementUssClassName = "nb-chart-scatterplot";
+        /// <summary>
+        /// USS class automatically applied to markers in charts of this type.
+        /// </summary>
         public static readonly string markerUssClassName = "nb-chart-scatterplot__marker";
 
         #region Element Boilerplate
