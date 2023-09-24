@@ -1,11 +1,10 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace NB.Charts
 {
     /// <summary>
-    /// Base interface for time series charts, etc. line and scatter plots.
+    /// Base interface for time series charts, e.g. line and scatter plots.
     /// </summary>
     public interface ITimeSeriesChart : IChart<IList<Vector2>>
     {
@@ -24,13 +23,25 @@ namespace NB.Charts
 
         /// <summary>
         /// Sets the visible data range on the X-axis, effectively "zooming" on a specific region.
+        /// If set to 0,0, will auto-scale to fit data.
         /// </summary>
         void SetDataRangeX(float lower, float upper);
 
         /// <summary>
         /// Sets the visible data range on the Y-axis, effectively "zooming" on a specific region.
+        /// If set to 0,0, will auto-scale to fit data.
         /// </summary>
         void SetDataRangeY(float lower, float upper);
+
+        /// <summary>
+        /// If non-zero, will extend the visible x range on both sides by this amount.
+        /// </summary>
+        float DataBufferX { get; set; }
+
+        /// <summary>
+        /// If non-zero, will extend the visible y-range on both sides by this amount.
+        /// </summary>
+        float DataBufferY { get; set; }
 
         /// <summary>
         /// Color to use for major gridlines.

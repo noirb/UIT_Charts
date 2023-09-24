@@ -192,7 +192,11 @@ namespace NB.Charts
             }
 
             Vector2 dataRangeX = this.dataRangeX == Vector2.zero ? new Vector2(dataMin.x, dataMax.x) : this.dataRangeX;
+            dataRangeX.x -= DataBufferX;
+            dataRangeX.y += DataBufferX;
             Vector2 dataRangeY = this.dataRangeY == Vector2.zero ? new Vector2(dataMin.y, dataMax.y) : this.dataRangeY;
+            dataRangeY.x -= DataBufferY;
+            dataRangeY.y += DataBufferY;
 
             Vector2 eleRangeX = new Vector2(content.resolvedStyle.paddingLeft, content.resolvedStyle.width);
             Vector2 eleRangeY = new Vector2(content.resolvedStyle.height, content.resolvedStyle.paddingTop); // flipped due to flipped coordinate system in UI

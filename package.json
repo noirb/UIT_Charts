@@ -1,6 +1,6 @@
 {
     "name": "com.nb.uit_charts",
-    "version": "0.0.9",
+    "version": "0.0.10",
     "displayName": "UIT Charts",
     "description": "Library for producing nice-looking charts and plots in UIToolkit",
     "unity": "2022.1",
