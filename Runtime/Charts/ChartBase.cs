@@ -200,6 +200,7 @@ namespace NB.Charts
         public void SetVisibility(string series, bool visible)
         {
             seriesVisibility[series] = visible;
+            legend.SetEnabled(series, visible);
         }
 
         public void ToggleVisibility(string series)
@@ -253,6 +254,22 @@ namespace NB.Charts
             tooltipLabel.style.opacity = 0;
             tooltipLabel.style.left = 0;
             tooltipLabel.style.top = 0;
+        }
+
+        /// <summary>
+        /// If the plot has a legend, collapses it to hide its content.
+        /// </summary>
+        public void CollapseLegend()
+        {
+            legend.Collapse();
+        }
+
+        /// <summary>
+        /// If the plot has a legend, expands it to show its content.
+        /// </summary>
+        public void ExpandLegend()
+        {
+            legend.Expand();
         }
 
         protected abstract void GenerateVisualContent(MeshGenerationContext mgc);

@@ -106,5 +106,15 @@ namespace NB.Charts
         /// Whether or not to display a legend inside the chart.
         /// </summary>
         bool ShowLegend { get; set; }
+
+        /// <summary>
+        /// If the plot has a legend, collapses it to hide its content.
+        /// </summary>
+        void CollapseLegend();
+
+        /// <summary>
+        /// If the plot has a legend, expands it to show its content.
+        /// </summary>
+        void ExpandLegend();
     }
 }

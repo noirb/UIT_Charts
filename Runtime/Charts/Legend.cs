@@ -33,6 +33,7 @@ namespace NB.Charts
         public Action<string> OnToggleSeries { get; set; }
 
         VisualElement entryContainer;
+        Button minimizeButton;
         public Legend()
         {
             AddToClassList(legendUssClassName);
@@ -41,7 +42,7 @@ namespace NB.Charts
             entryContainer.AddToClassList(legendEntriesUssClassName);
             Add(entryContainer);
 
-            Button minimizeButton = new Button();
+            minimizeButton = new Button();
             minimizeButton.AddToClassList(legendEntriesMinimizeButtonClassName);
             minimizeButton.text = "▲";
             minimizeButton.RegisterCallback<ClickEvent>((evt) => {
@@ -66,6 +67,8 @@ namespace NB.Charts
         }
 
         Dictionary<string, VisualElement> entries = new Dictionary<string, VisualElement>();
+        Dictionary<string, Color> entryColors = new Dictionary<string, Color>();
+
         public void AddEntry(string name, Color color)
         {
             VisualElement ele = new VisualElement();
@@ -84,11 +87,7 @@ namespace NB.Charts
 
             ele.RegisterCallback<ClickEvent>((evt) =>
             {
-                ele.ToggleInClassList(legendEntryDisabledUssClassName);
-                if (ele.ClassListContains(legendEntryDisabledUssClassName))
-                    colorBlock.style.backgroundColor = Color.gray;
-                else
-                    colorBlock.style.backgroundColor = color;
+                ToggleEnabled(name);
 
                 OnToggleSeries?.Invoke(name);
             });
@@ -96,6 +95,7 @@ namespace NB.Charts
             entryContainer.Add(ele);
 
             entries[name] = ele;
+            entryColors[name] = color;
         }
 
         public void RemoveEntry(string name)
@@ -104,6 +104,7 @@ namespace NB.Charts
                 return;
 
             entries[name].RemoveFromHierarchy();
+            entryColors.Remove(name);
             entries.Remove(name);
         }
 
@@ -112,7 +113,52 @@ namespace NB.Charts
             if (!entries.ContainsKey(name))
                 return;
 
+            entryColors[name] = color;
             entries[name].Q("colorblock").style.backgroundColor = color;
+        }
+
+        public void SetEnabled(string name, bool enabled)
+        {
+            if (enabled)
+            {
+                entries[name].RemoveFromClassList(legendEntryDisabledUssClassName);
+                entries[name].Q("colorblock").style.backgroundColor = Color.gray;
+            }
+            else
+            {
+                entries[name].AddToClassList(legendEntryDisabledUssClassName);
+                entries[name].Q("colorblock").style.backgroundColor = entryColors[name];
+            }
+        }
+
+        public void ToggleEnabled(string name)
+        {
+            Debug.LogFormat("Toggling {0}", name);
+            entries[name].ToggleInClassList(legendEntryDisabledUssClassName);
+            if (entries[name].ClassListContains(legendEntryDisabledUssClassName))
+                entries[name].Q("colorblock").style.backgroundColor = Color.gray;
+            else
+                entries[name].Q("colorblock").style.backgroundColor = entryColors[name];
+        }
+
+        /// <summary>
+        /// Collapses legend to its minimized state
+        /// </summary>
+        public void Collapse()
+        {
+            entryContainer.AddToClassList(legendEntriesMinimizedClassName);
+            minimizeButton.text = "▼";
+            entryContainer.SetEnabled(false);
+        }
+
+        /// <summary>
+        /// Expands legend to its visible state
+        /// </summary>
+        public void Expand()
+        {
+            entryContainer.RemoveFromClassList(legendEntriesMinimizedClassName);
+            minimizeButton.text = "▲";
+            entryContainer.SetEnabled(true);
         }
     }
 }
