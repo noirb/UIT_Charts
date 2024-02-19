@@ -114,7 +114,8 @@ namespace NB.Charts
                 return;
 
             entryColors[name] = color;
-            entries[name].Q("colorblock").style.backgroundColor = color;
+            if (!entries[name].ClassListContains(legendEntryDisabledUssClassName))
+                entries[name].Q("colorblock").style.backgroundColor = color;
         }
 
         public void SetEnabled(string name, bool enabled)
@@ -122,12 +123,12 @@ namespace NB.Charts
             if (enabled)
             {
                 entries[name].RemoveFromClassList(legendEntryDisabledUssClassName);
-                entries[name].Q("colorblock").style.backgroundColor = Color.gray;
+                entries[name].Q("colorblock").style.backgroundColor = entryColors[name];
             }
             else
             {
                 entries[name].AddToClassList(legendEntryDisabledUssClassName);
-                entries[name].Q("colorblock").style.backgroundColor = entryColors[name];
+                entries[name].Q("colorblock").style.backgroundColor = Color.gray;
             }
         }
 
