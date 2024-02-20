@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.Pool;
@@ -86,6 +84,23 @@ namespace NB.Charts
                 marker.RemoveFromHierarchy();
             }
         );
+
+
+        uint autoDownsampleSize = 0;
+        List<Vector2> downsampleCache = null;
+        /// <summary>
+        /// If non-zero, datasets will be automatically downsampled/decimated to a maximum
+        /// number of points equal to less than this value.
+        /// </summary>
+        public uint AutoDownsampleSize
+        {
+            get => autoDownsampleSize;
+            set
+            {
+                autoDownsampleSize = value;
+                downsampleCache = new List<Vector2>(new Vector2[autoDownsampleSize]);
+            }
+        }
 
         float defaultDataWidth = 2;
         /// <summary>
@@ -206,12 +221,39 @@ namespace NB.Charts
 
             foreach (var data in series)
             {
-                Vector2 prev_point = Vector2.zero;
+                int start_idx = 0;
                 for (int i = 0; i < data.Value.Count; i++)
                 {
-                    if (data.Value[i].x < dataRangeX.x || data.Value[i].x > dataRangeX.y)
-                        continue;
-                    var pt = new Vector2(MapRange(data.Value[i].x, dataRangeX, eleRangeX), MapRange(data.Value[i].y, dataRangeY, eleRangeY));
+                    if (data.Value[i].x < dataRangeX.x)
+                        start_idx = i;
+                    else
+                        break;
+                }
+                int end_idx = data.Value.Count;
+                for (int i = data.Value.Count - 1; i >= 0; i--)
+                {
+                    if (data.Value[i].x < dataRangeX.y)
+                        break;
+                    else
+                        end_idx = i + 1;
+                }
+                var slice = Utils.ListUtils<Vector2>.Slice(data.Value, start_idx, end_idx - start_idx);
+                int sampleCount = slice.Length;
+                if (autoDownsampleSize > 0)
+                {
+                    sampleCount = Utils.Downsampling.LTTB(ref slice, AutoDownsampleSize, ref downsampleCache);
+                }
+
+                Vector2 prev_point = Vector2.zero;
+                for (int i = 0; i < sampleCount; i++)
+                {
+                    Vector2 cur_point;
+                    if (autoDownsampleSize > 0)
+                        cur_point = downsampleCache[i];
+                    else
+                        cur_point = slice[i];
+
+                    var pt = new Vector2(MapRange(cur_point.x, dataRangeX, eleRangeX), MapRange(cur_point.y, dataRangeY, eleRangeY));
                     if (i > 0 && Vector2.Distance(pt, prev_point) <= 16)
                         continue;
                     prev_point = pt;
@@ -224,7 +266,7 @@ namespace NB.Charts
                     var marker = markerPool.Get();
                     marker.style.translate = new StyleTranslate(new Translate(new Length(pt.x, LengthUnit.Pixel), new Length(pt.y, LengthUnit.Pixel)));
                     marker.style.backgroundColor = seriesColors[data.Key] * 0.8f;
-                    marker.userData = data.Value[i];
+                    marker.userData = cur_point;
 
                     if (showMarkers && seriesVisibility[data.Key])
                         marker.style.opacity = 1f;
@@ -291,24 +333,61 @@ namespace NB.Charts
                     else
                         break;
                 }
+                int end_idx = data.Value.Count;
+                for (int i = data.Value.Count - 1;  i >= 0; i--)
+                {
+                    if (data.Value[i].x < dataRangeX.y)
+                        break;
+                    else
+                        end_idx = i+1;
+                }
+
+                int sampleCount = end_idx - start_idx;
+                var slice = Utils.ListUtils<Vector2>.Slice(data.Value, start_idx, sampleCount);
 
                 p.lineJoin = LineJoin.Miter;
                 p.lineCap = LineCap.Round;
                 p.BeginPath();
-                p.MoveTo(new Vector2(MapRange(data.Value[start_idx].x, dataRangeX, eleRangeX), MapRange(data.Value[start_idx].y, dataRangeY, eleRangeY)));
-                Vector2 prev = new Vector2(MapRange(data.Value[start_idx].x, dataRangeX, eleRangeX), MapRange(data.Value[start_idx].y, dataRangeY, eleRangeY));
-                for (int i = start_idx; i < data.Value.Count; i++)
-                {
-                    var next = new Vector2(MapRange(data.Value[i].x, dataRangeX, eleRangeX), MapRange(data.Value[i].y, dataRangeY, eleRangeY));
-                    if (Vector2.Distance(next, prev) > 2) // only draw points which are at least 2 pixels apart from each other (needed to stay under vertex limit for large datasets)
-                    {
-                        p.LineTo(next);
-                        prev = next;
-                    }
 
-                    // if we run past the selected data range, bail
-                    if (data.Value[i].x > dataRangeX.y)
-                        break;
+                if (autoDownsampleSize > 0)
+                {
+                    // downsample slice and process remaining points
+                    sampleCount = Utils.Downsampling.LTTB(ref slice, autoDownsampleSize, ref downsampleCache);
+
+                    p.MoveTo(new Vector2(MapRange(downsampleCache[0].x, dataRangeX, eleRangeX), MapRange(downsampleCache[0].y, dataRangeY, eleRangeY)));
+                    Vector2 prev = new Vector2(MapRange(downsampleCache[0].x, dataRangeX, eleRangeX), MapRange(downsampleCache[0].y, dataRangeY, eleRangeY));
+                    for (int i = 0; i < sampleCount; i++)
+                    {
+                        var next = new Vector2(MapRange(downsampleCache[i].x, dataRangeX, eleRangeX), MapRange(downsampleCache[i].y, dataRangeY, eleRangeY));
+                        if (Vector2.Distance(next, prev) > 2) // only draw points which are at least 2 pixels apart from each other (needed to stay under vertex limit for large datasets)
+                        {
+                            p.LineTo(next);
+                            prev = next;
+                        }
+
+                        // if we run past the selected data range, bail
+                        if (downsampleCache[i].x > dataRangeX.y)
+                            break;
+                    }
+                }
+                else
+                {
+
+                    p.MoveTo(new Vector2(MapRange(slice[0].x, dataRangeX, eleRangeX), MapRange(slice[0].y, dataRangeY, eleRangeY)));
+                    Vector2 prev = new Vector2(MapRange(slice[0].x, dataRangeX, eleRangeX), MapRange(slice[0].y, dataRangeY, eleRangeY));
+                    for (int i = 0; i < sampleCount; i++)
+                    {
+                        var next = new Vector2(MapRange(slice[i].x, dataRangeX, eleRangeX), MapRange(slice[i].y, dataRangeY, eleRangeY));
+                        if (Vector2.Distance(next, prev) > 2) // only draw points which are at least 2 pixels apart from each other (needed to stay under vertex limit for large datasets)
+                        {
+                            p.LineTo(next);
+                            prev = next;
+                        }
+
+                        // if we run past the selected data range, bail
+                        if (slice[i].x > dataRangeX.y)
+                            break;
+                    }
                 }
                 p.Stroke();
             }

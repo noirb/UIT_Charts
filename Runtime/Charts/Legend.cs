@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -134,7 +133,6 @@ namespace NB.Charts
 
         public void ToggleEnabled(string name)
         {
-            Debug.LogFormat("Toggling {0}", name);
             entries[name].ToggleInClassList(legendEntryDisabledUssClassName);
             if (entries[name].ClassListContains(legendEntryDisabledUssClassName))
                 entries[name].Q("colorblock").style.backgroundColor = Color.gray;
