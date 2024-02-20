@@ -241,9 +241,26 @@ namespace NB.Charts
         /// <param name="text">Text to display in the tooltip.</param>
         public void ShowTooltip(Vector2 pos, string text)
         {
-            tooltipLabel.style.translate = new StyleTranslate(new Translate(new Length(pos.x, LengthUnit.Pixel), new Length(pos.y, LengthUnit.Pixel)));
+            tooltipLabel.style.left = new StyleLength(new Length(pos.x, LengthUnit.Pixel));
+            tooltipLabel.style.top = new StyleLength(new Length(pos.y, LengthUnit.Pixel));
             tooltipLabel.text = text;
             tooltipLabel.style.opacity = 1;
+
+            // Shift tooltip if it will overflow chart bounds.
+            // This must be delayed until the next frame after setting the tooltip text
+            // as the tooltip's dimensions may need to be recalculated.
+            schedule.Execute(() =>
+            {
+                float top = pos.y, left = pos.x;
+
+                if (left < 5) left = 5;
+                if (left + tooltipLabel.worldBound.width > tooltipLabel.parent.worldBound.width - 5) left = tooltipLabel.parent.worldBound.width - 5 - tooltipLabel.worldBound.width;
+                if (top < 5) top = 5;
+                if (top + tooltipLabel.worldBound.height > tooltipLabel.parent.worldBound.height - 5) top = tooltipLabel.parent.worldBound.height - 5 - tooltipLabel.worldBound.height;
+
+                tooltipLabel.style.left = new StyleLength(new Length(left, LengthUnit.Pixel));
+                tooltipLabel.style.top = new StyleLength(new Length(top, LengthUnit.Pixel));
+            });
         }
 
         /// <summary>
